@@ -15,11 +15,13 @@ app.get('/*', (_, res) => res.redirect('/'))
 const httpServer = http.createServer(app)
 const webSocketServer = new WebSocket.Server({ server: httpServer })
 
+const sockets = []
 webSocketServer.on('connection', (socket) => {
-  console.log('Connected to browser ✅')
+  sockets.push(socket)
   socket.on('close', () => console.log('Disconnected from the browser ❌'))
-  socket.on('message', (message) => console.log(message.toString('utf8')))
-  socket.send('hello!!!')
+  socket.on('message', (message) =>
+    sockets.forEach((aSocket) => aSocket.send(message.toString('utf-8')))
+  )
 })
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`)
