@@ -15,5 +15,10 @@ app.get('/*', (_, res) => res.redirect('/'))
 const httpServer = http.createServer(app)
 const webSocketServer = new WebSocket.Server({ server: httpServer })
 
+const handleConnection = (socket) => {
+  console.log(socket)
+}
+webSocketServer.on('connection', handleConnection)
+
 const handleListen = () => console.log(`Listening on http://localhost:3000`)
 httpServer.listen(3000, handleListen)
