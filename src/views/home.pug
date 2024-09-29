@@ -10,7 +10,11 @@ html(lang="ko")
       h1 zoom
     main
       ul
-      form
+      form#nickname
+        input(type="text", placeholder="닉네임을 입력해주세요", required)
+        button 저장
+      form#message
         input(type="text", placeholder="메시지를 입력해주세요", required)
         button 보내기
+      
     script(src="/public/js/app.js") 
