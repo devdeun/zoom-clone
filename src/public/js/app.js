@@ -2,6 +2,8 @@ const socket = io()
 
 const welcome = document.querySelector('#welcome')
 const roomNameForm = welcome.querySelector('form')
+const roomList = welcome.querySelector('ul')
+
 const room = document.querySelector('#room')
 const messageForm = room.querySelector('#message')
 const nicknameForm = room.querySelector('#nickname')
@@ -60,3 +62,11 @@ roomNameForm.addEventListener('submit', handleRoomSubmit)
 socket.on('welcome', (user) => addMessage(`${user}님이 입장하셨습니다!`))
 socket.on('bye', (user) => addMessage(`${user}님이 떠났습니다.`))
 socket.on('message', ({ user, message }) => addMessage(`${user}: ${message}`))
+socket.on('room_change', (rooms) => {
+  roomList.innerHTML = ''
+  rooms.forEach((room) => {
+    const li = document.createElement('li')
+    li.innerText = room
+    roomList.append(li)
+  })
+})
