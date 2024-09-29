@@ -17,8 +17,8 @@ const wsServer = new Server(httpServer)
 
 wsServer.on('connection', (socket) => {
   socket.on('enter_room', (roomName, done) => {
-    console.log(roomName)
-    done()
+    socket.join(roomName)
+    done(roomName)
   })
 })
 

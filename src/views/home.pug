@@ -14,5 +14,12 @@ html(lang="ko")
         form
           input(placeholder="방 이름", required, type="text")
           button 입장하기
+      #room
+        h3
+        ul
+        form
+          input(placeholder="메시지를 입력하세요", required, type="text")
+          button 전송
+
     script(src="/socket.io/socket.io.js")  
     script(src="/public/js/app.js") 
