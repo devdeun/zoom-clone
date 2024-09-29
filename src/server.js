@@ -16,9 +16,21 @@ const httpServer = http.createServer(app)
 const wsServer = new Server(httpServer)
 
 wsServer.on('connection', (socket) => {
+  socket['nickname'] = '익명'
   socket.on('enter_room', (roomName, done) => {
     socket.join(roomName)
     done(roomName)
+    socket.to(roomName).emit('welcome', socket.nickname)
+  })
+  socket.on('disconnecting', () => {
+    socket.rooms.forEach((room) => socket.to(room).emit('bye', socket.nickname))
+  })
+  socket.on('message', (message, roomName, done) => {
+    socket.to(roomName).emit('message', { user: socket.nickname, message })
+    done()
+  })
+  socket.on('nickname', (nickname) => {
+    socket['nickname'] = nickname
   })
 })
 
