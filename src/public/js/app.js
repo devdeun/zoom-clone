@@ -32,11 +32,15 @@ const handleNicknameSubmit = (roomName) => {
   socket.emit('nickname', nickname, roomName, () => {})
 }
 
-const showRoom = (roomName) => {
+const setRoomInfo = (roomName, userCount) => {
+  const h3 = room.querySelector('h3')
+  h3.innerText = `Room ${roomName} (${userCount})`
+}
+
+const showRoom = (roomName, count) => {
   welcome.hidden = true
   room.hidden = false
-  const h3 = room.querySelector('h3')
-  h3.innerText = `Room ${roomName}`
+  setRoomInfo(roomName, count)
 
   messageForm.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -59,8 +63,14 @@ const handleRoomSubmit = (event) => {
 
 roomNameForm.addEventListener('submit', handleRoomSubmit)
 
-socket.on('welcome', (user) => addMessage(`${user}님이 입장하셨습니다!`))
-socket.on('bye', (user) => addMessage(`${user}님이 떠났습니다.`))
+socket.on('welcome', (roomName, user, count) => {
+  setRoomInfo(roomName, count)
+  addMessage(`${user}님이 입장하셨습니다!`)
+})
+socket.on('bye', (roomName, user, count) => {
+  setRoomInfo(roomName, count)
+  addMessage(`${user}님이 떠났습니다.`)
+})
 socket.on('message', ({ user, message }) => addMessage(`${user}: ${message}`))
 socket.on('room_change', (rooms) => {
   roomList.innerHTML = ''

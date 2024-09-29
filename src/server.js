@@ -26,17 +26,26 @@ const getPublicRooms = () => {
   return publicRooms
 }
 
+const getUserCountInRoom = (roomName) =>
+  wsServer.sockets.adapter.rooms.get(roomName).size
+
 wsServer.on('connection', (socket) => {
   socket['nickname'] = '익명'
   wsServer.sockets.emit('room_change', getPublicRooms())
   socket.on('enter_room', (roomName, done) => {
     socket.join(roomName)
-    done(roomName)
-    socket.to(roomName).emit('welcome', socket.nickname)
+    done(roomName, getUserCountInRoom(roomName))
+    socket
+      .to(roomName)
+      .emit('welcome', roomName, socket.nickname, getUserCountInRoom(roomName))
     wsServer.sockets.emit('room_change', getPublicRooms())
   })
   socket.on('disconnecting', () => {
-    socket.rooms.forEach((room) => socket.to(room).emit('bye', socket.nickname))
+    socket.rooms.forEach((room) => {
+      socket
+        .to(room)
+        .emit('bye', room, socket.nickname, getUserCountInRoom(room) - 1)
+    })
   })
   socket.on('disconnect', () => {
     wsServer.sockets.emit('room_change', getPublicRooms())
