@@ -1,6 +1,6 @@
 import http from 'http'
 import express from 'express'
-import WebSocket from 'ws'
+import { Server } from 'socket.io'
 
 const app = express()
 
@@ -13,30 +13,12 @@ app.get('/', (_, res) => res.render('home'))
 app.get('/*', (_, res) => res.redirect('/'))
 
 const httpServer = http.createServer(app)
-const webSocketServer = new WebSocket.Server({ server: httpServer })
+const wsServer = new Server(httpServer)
 
-const sockets = []
-webSocketServer.on('connection', (socket) => {
-  sockets.push(socket)
-  socket['nickname'] = '익명'
-  socket.on('close', () => console.log('Disconnected from the browser ❌'))
-  socket.on('message', (message) => {
-    const parsedMessage = JSON.parse(message)
-    switch (parsedMessage.type) {
-      case 'message':
-        const newMessage = parsedMessage.payload.toString('utf-8')
-        sockets
-          .filter((aSocket) => aSocket !== socket)
-          .forEach((aSocket) =>
-            aSocket.send(`${socket.nickname}: ${newMessage}`)
-          )
-        break
-      case 'nickname':
-        socket['nickname'] = parsedMessage.payload
-        break
-      default:
-        break
-    }
+wsServer.on('connection', (socket) => {
+  socket.on('enter_room', (roomName, done) => {
+    console.log(roomName)
+    done()
   })
 })
 

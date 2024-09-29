@@ -8,13 +8,11 @@ html(lang="ko")
   body 
     header
       h1 zoom
+
     main
-      ul
-      form#nickname
-        input(type="text", placeholder="닉네임을 입력해주세요", required)
-        button 저장
-      form#message
-        input(type="text", placeholder="메시지를 입력해주세요", required)
-        button 보내기
-      
+      #welcome
+        form
+          input(placeholder="방 이름", required, type="text")
+          button 입장하기
+    script(src="/socket.io/socket.io.js")  
     script(src="/public/js/app.js") 
